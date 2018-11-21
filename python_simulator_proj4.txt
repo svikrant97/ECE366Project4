@@ -103,6 +103,7 @@ for i in range(len(lines)-1):
     if(opcode not in opcode_to_ins): # Current Instruction is R-type
         print("Instruction Type: R-type")
         print("Current PC:", hex(PC))
+        print("Line number:",line_number)
         current_ins_type='R'
         R_type_count+=1
         total_cycle_count += 4
@@ -115,20 +116,20 @@ for i in range(len(lines)-1):
 
         if(mips_ins=="add"):
             four_cycle_instr_count+=1
-            register_val[int(rd)]=register_val[int(rs)]+register_val[int(rt)]
-            print("R%d= %d" % (int(rd),int(register_val[int(rs)]+register_val[int(rt)])))
+            add_val=register_val[int(rd)]=register_val[int(rs)]+register_val[int(rt)]
+            print("R%d= %d" % (int(rd),add_val))
             line_number+=1
 
         elif(mips_ins=="sub"):
             four_cycle_instr_count += 1
-            register_val[int(rd)] = register_val[int(rs)] - register_val[int(rt)]
-            print("R%d= %d" % (int(rd), int(register_val[int(rs)] - register_val[int(rt)])))
+            sub_val=register_val[int(rd)] = register_val[int(rs)] - register_val[int(rt)]
+            print("R%d= %d" % (int(rd),sub_val))
             line_number += 1
 
         elif(mips_ins=="xor"):
             four_cycle_instr_count += 1
-            register_val[int(rd)] = register_val[int(rs)] ^ register_val[int(rt)]
-            print("R%d= %d" % (int(rd), int(register_val[int(rs)] ^ register_val[int(rt)])))
+            xor_val=register_val[int(rd)] = register_val[int(rs)] ^ register_val[int(rt)]
+            print("R%d= %d" % (int(rd),xor_val))
             line_number += 1
 
         elif(mips_ins=="slt"):
@@ -144,6 +145,7 @@ for i in range(len(lines)-1):
     else: # Current Instruction is I-type
         print("Instruction Type: I-type")
         print("Current PC:", hex(PC))
+        print("Line number:", line_number)
         current_ins_type = 'I'
         I_type_count+=1
         mips_ins=opcode_to_ins[opcode]
@@ -155,9 +157,9 @@ for i in range(len(lines)-1):
             print("Current Instruction: ", mips_ins + " " + "$" + rt + " ," + "$" + rs + " ," + imm)
             four_cycle_instr_count += 1
             total_cycle_count += 4
-            register_val[int(rt)]=register_val[int(rs)]+int(imm)
+            val=register_val[int(rt)]=register_val[int(rs)]+int(imm)
             #print("register_val[int(rs)]=",register_val[int(rs)])
-            print("R%d= %d" % (int(rt), int(register_val[int(rs)] + int(imm))))
+            print("R%d= %d" % (int(rt),val))
             line_number += 1
             PC+=4
 
@@ -168,7 +170,7 @@ for i in range(len(lines)-1):
             else:
                 print("Current Instruction: ", mips_ins + " " + "$" + rt + " ," + "$" + rs + " ," + str(imm))
             if(register_val[int(rs)]==register_val[int(rt)]):
-                print("rs=rt")
+                print("Branching to line:",line_number + (int(imm)-1))
                 three_cycle_instr_count+=1
                 total_cycle_count += 3
                 infile.seek(byte_length[line_number + (int(imm)-1)], 0)
@@ -192,6 +194,7 @@ for i in range(len(lines)-1):
                 three_cycle_instr_count += 1
                 total_cycle_count+=3
                 infile.seek(byte_length[line_number+(int(imm)-1)], 0)
+                print("Branching to line",line_number+int(imm)-1)
                 line_number+=int(imm)
                 PC+=(4*int(imm))
             else:
