@@ -1,0 +1,341 @@
+infile =open("Benchcase_A1.txt",'r')
+R_type_count=0 # For count of R type instructions
+I_type_count=0 # For count of I type instructions
+length=0 # For calculating length of inininfile.
+three_cycle_instr_count=0 #For counting number of instructions which execute in three cycles.
+four_cycle_instr_count=0 #For counting number of instructions which execute in four cycles.
+five_cycle_instr_count=0 #For counting number of instructions which execute in five cycles.
+total_cycle_count=0 #For counting total cycle count after including hazard conditions.
+register_val=[0,0,0,0,0,0,0,0] # Initializing value of registers.
+stall_count=0# Total number of stalls implemented.
+flush_count=0#Total number of flushes implemented.
+line_number=0#To keep track of line number because line number is used as an address
+data_hazard=0#Number of data hazards
+control_hazard=0#Number of data hazards
+#initializing variables
+rd=""
+rs=""
+rt=""
+imm=""
+data_memory=[None]*4096
+for i in range(4096):
+    data_memory[i]=0
+PC=0 # Initializing Program counter.
+hex_to_bin={
+    "0":"0000",
+    "1":"0001",
+    "2":"0010",
+    "3":"0011",
+    "4":"0100",
+    "5":"0101",
+    "6":"0110",
+    "7":"0111",
+    "8":"1000",
+    "9":"1001",
+    "a":"1010",
+    "b":"1011",
+    "c":"1100",
+    "d":"1101",
+    "e":"1110",
+    "f":"1111"
+}
+opcode_to_ins={
+    "001000":"addi",
+    "000100":"beq",
+    "000101":"bne",
+    "100011":"lw",
+    "101011":"sw"
+}
+funct_to_ins={
+    "100000":"add",
+    "100010":"sub",
+    "100110":"xor",
+    "101010":"slt"
+}
+for line in infile:  # Calculating number of lines in the inininfile to calculate the number of bytes in every line. This will be used to jump inininfile pointer to a particular line for Branch statement.
+    length = length + 1
+
+byte_length = [None] * length  # Declaring list that stores number of bytes to jump to reach a particular line. This will be used for the branch(B) instruction.
+
+for i in range(length):  # initializing byte_length array.
+    byte_length[i] = 0
+
+infile.seek(0)  # Going back to beginning of infile.
+i = 0  # Line counter.
+byte_length[0] = 0  # We don't need to jump to any length to get to the first line.
+for line in infile:
+    if i <= length - 2:
+        byte_length[i + 1] = byte_length[i] + len(line) + 1
+        i = i + 1
+    else:
+        break
+
+infile.seek(0)
+lines =  infile.read().splitlines()
+for i in range(len(lines)-1):
+    line = lines[i]
+    print("Total Cycles completed till now:",total_cycle_count)
+    print("Current line:", line)
+    next_line = lines[i + 1]
+    # Computing what the next line instruction is to predict hazards.
+    next_ins=hex_to_bin[next_line[2]]+hex_to_bin[next_line[3]]+hex_to_bin[next_line[4]]+hex_to_bin[next_line[5]]+hex_to_bin[next_line[6]]+hex_to_bin[next_line[7]]+hex_to_bin[next_line[8]]+hex_to_bin[next_line[9]]
+    next_opcode=next_ins[0]+next_ins[1]+next_ins[2]+next_ins[3]+next_ins[4]+next_ins[5]
+    if(next_opcode not in opcode_to_ins): # Next line instruction is R-type
+        next_ins_type='R'
+        next_funct = next_ins[26] + next_ins[27] + next_ins[28] + next_ins[29] + next_ins[30] + next_ins[31]
+        next_mips_ins = funct_to_ins[next_funct]
+        next_rs = str((int(next_ins[6]) * 16) + (int(next_ins[7]) * 8) + (int(next_ins[8]) * 4) + (int(next_ins[9]) * 2) + (int(next_ins[10]) * 1))
+        next_rt = str((int(next_ins[11]) * 16) + (int(next_ins[12]) * 8) + (int(next_ins[13]) * 4) + (int(next_ins[14]) * 2) + (int(next_ins[15]) * 1))
+        next_rd = str((int(next_ins[16]) * 16) + (int(next_ins[17]) * 8) + (int(next_ins[18]) * 4) + (int(next_ins[19]) * 2) + (int(next_ins[20]) * 1))
+
+
+    else: # Next line instruction is I-type.
+        next_ins_type='I'
+        next_mips_ins = opcode_to_ins[next_opcode]
+        next_rs = str((int(next_ins[6]) * 16) + (int(next_ins[7]) * 8) + (int(next_ins[8]) * 4) + (int(next_ins[9]) * 2) + (int(next_ins[10]) * 1))
+        next_rt = str((int(next_ins[11]) * 16) + (int(next_ins[12]) * 8) + (int(next_ins[13]) * 4) + (int(next_ins[14]) * 2) + (int(next_ins[15]) * 1))
+        next_imm = str((int(next_ins[16]) * (-32768)) + (int(next_ins[17]) * 16384) + (int(next_ins[18]) * 8192) + (int(next_ins[19]) * 4096) + (int(next_ins[20]) * 2048) + (int(next_ins[21]) * 1024) + (int(next_ins[22]) * 512) + (int(next_ins[23]) * 256) + (int(next_ins[24]) * 128) + (int(next_ins[25]) * 64) + (int(next_ins[26]) * 32) + (int(next_ins[27]) * 16) + ( int(next_ins[28]) * 8) + (int(next_ins[29]) * 4) + (int(next_ins[30]) * 2) + (int(next_ins[31]) * 1))
+
+    # Computing what the current instruction is:
+    ins=hex_to_bin[line[2]]+hex_to_bin[line[3]]+hex_to_bin[line[4]]+hex_to_bin[line[5]]+hex_to_bin[line[6]]+hex_to_bin[line[7]]+hex_to_bin[line[8]]+hex_to_bin[line[9]]
+    print("Current I_mem(Binary format):",ins)
+    opcode=ins[0]+ins[1]+ins[2]+ins[3]+ins[4]+ins[5]
+    if(opcode not in opcode_to_ins): # Current Instruction is R-type
+        print("Instruction Type: R-type")
+        print("Current PC:", hex(PC))
+        current_ins_type='R'
+        R_type_count+=1
+        total_cycle_count += 4
+        funct=ins[26]+ins[27]+ins[28]+ins[29]+ins[30]+ins[31]
+        mips_ins=funct_to_ins[funct]
+        rs=str((int(ins[6])*16)+(int(ins[7])*8)+(int(ins[8])*4)+(int(ins[9])*2)+(int(ins[10])*1))
+        rt=str((int(ins[11])*16)+(int(ins[12])*8)+(int(ins[13])*4)+(int(ins[14])*2)+(int(ins[15])*1))
+        rd=str((int(ins[16])*16)+(int(ins[17])*8)+(int(ins[18])*4)+(int(ins[19])*2)+(int(ins[20])*1))
+        print("Current Instruction: ",mips_ins+" "+"$"+rd+" ,"+"$"+rs+" ,"+"$"+rt)
+
+        if(mips_ins=="add"):
+            four_cycle_instr_count+=1
+            register_val[int(rd)]=register_val[int(rs)]+register_val[int(rt)]
+            print("R%d= %d" % (int(rd),int(register_val[int(rs)]+register_val[int(rt)])))
+            line_number+=1
+
+        elif(mips_ins=="sub"):
+            four_cycle_instr_count += 1
+            register_val[int(rd)] = register_val[int(rs)] - register_val[int(rt)]
+            print("R%d= %d" % (int(rd), int(register_val[int(rs)] - register_val[int(rt)])))
+            line_number += 1
+
+        elif(mips_ins=="xor"):
+            four_cycle_instr_count += 1
+            register_val[int(rd)] = register_val[int(rs)] ^ register_val[int(rt)]
+            print("R%d= %d" % (int(rd), int(register_val[int(rs)] ^ register_val[int(rt)])))
+            line_number += 1
+
+        elif(mips_ins=="slt"):
+            four_cycle_instr_count += 1
+            if(register_val[int(rs)]<register_val[int(rt)]):
+                register_val[int(rd)]=1
+                print("R%d= 1" %int(rd))
+            else:
+                register_val[int(rd)]=0
+                print("R%d= 0" % int(rd))
+            line_number += 1
+        PC+=4
+    else: # Current Instruction is I-type
+        print("Instruction Type: I-type")
+        print("Current PC:", hex(PC))
+        current_ins_type = 'I'
+        I_type_count+=1
+        mips_ins=opcode_to_ins[opcode]
+        rs=str((int(ins[6])*16)+(int(ins[7])*8)+(int(ins[8])*4)+(int(ins[9])*2)+(int(ins[10])*1))
+        rt=str((int(ins[11])*16)+(int(ins[12])*8)+(int(ins[13])*4)+(int(ins[14])*2)+(int(ins[15])*1))
+        imm=str((int(ins[16])*(-32768))+(int(ins[17])*16384)+(int(ins[18])*8192)+(int(ins[19])*4096)+(int(ins[20])*2048)+(int(ins[21])*1024)+(int(ins[22])*512)+(int(ins[23])*256)+(int(ins[24])*128)+(int(ins[25])*64)+(int(ins[26])*32)+(int(ins[27])*16)+(int(ins[28])*8)+(int(ins[29])*4)+(int(ins[30])*2)+(int(ins[31])*1))
+
+        if(mips_ins=="addi"):
+            print("Current Instruction: ", mips_ins + " " + "$" + rt + " ," + "$" + rs + " ," + imm)
+            four_cycle_instr_count += 1
+            total_cycle_count += 4
+            register_val[int(rt)]=register_val[int(rs)]+int(imm)
+            #print("register_val[int(rs)]=",register_val[int(rs)])
+            print("R%d= %d" % (int(rt), int(register_val[int(rs)] + int(imm))))
+            line_number += 1
+            PC+=4
+
+        elif(mips_ins=="beq"):
+            if (int(ins[16]) == 1):  # If number is negative
+                imm_display = hex((int(imm) + (1 << 32)) % (1 << 32))
+                print("Current Innstruction: ", mips_ins + " " + "$" + rt + " ," + "$" + rs + " ," + str(imm_display))
+            else:
+                print("Current Instruction: ", mips_ins + " " + "$" + rt + " ," + "$" + rs + " ," + str(imm))
+            if(register_val[int(rs)]==register_val[int(rt)]):
+                print("rs=rt")
+                three_cycle_instr_count+=1
+                total_cycle_count += 3
+                infile.seek(byte_length[line_number + (int(imm)-1)], 0)
+                line_number += int(imm)
+                PC += (4 * int(imm))
+            else:
+                line_number+=1
+                PC+=4
+
+
+
+
+        elif(mips_ins=="bne"):
+            if (int(ins[16]) == 1):  # If number is negative
+                imm_display = hex((int(imm) + (1 << 32)) % (1 << 32))
+                print("Current Innstruction: ", mips_ins + " " + "$" + rt + " ," + "$" + rs + " ," + str(imm_display))
+            else:
+                print("Current Instruction: ", mips_ins + " " + "$" + rt + " ," + "$" + rs + " ," + str(imm))
+            if(register_val[int(rs)]!=register_val[int(rt)]):
+                print("rs!=rt")
+                three_cycle_instr_count += 1
+                total_cycle_count+=3
+                infile.seek(byte_length[line_number+(int(imm)-1)], 0)
+                line_number+=int(imm)
+                PC+=(4*int(imm))
+            else:
+                line_number+=1
+                PC+=4
+
+
+
+        elif(mips_ins=="lw"):
+            print("Current Instruction: ", mips_ins + " " + "$" + rt + " ," + str(hex(int(imm)))+"(" +"$" +rs + ")")
+            five_cycle_instr_count+=1
+            total_cycle_count+=5
+            load_address=int(int(imm)+register_val[int(rs)])
+            array_address=int((load_address-2000)/4)
+            register_val[int(rt)]=data_memory[array_address]
+            line_number += 1
+            PC += 4
+
+        elif(mips_ins=="sw"):
+            print("Current Innstruction: ", mips_ins + " " + "$" + rt + " ," + str(hex(int(imm)))+"(" +"$" +rs + ")")
+            five_cycle_instr_count+=1
+            total_cycle_count+=5
+            store_address=int(int(imm)+register_val[int(rs)])
+            array_address = int((store_address - 8192)/4)
+            print("Array address:",array_address)
+            data_memory[array_address]=register_val[int(rt)]
+            line_number += 1
+            PC += 4
+
+        # Displaying next instruction.
+        if(next_ins_type=="R"): # Next instruction is R-type
+            print("Next Instruction: ",next_mips_ins + " " + "$" + next_rd + " ," + "$" + next_rs + " ," + "$" + next_rt)
+
+        elif(next_mips_ins=="addi"):
+                print("Next Instruction: ", next_mips_ins + " " + "$" + next_rt + " ," + "$" + next_rs + " ," + next_imm)
+
+        elif (next_mips_ins == "beq"):
+                if (int(next_ins[16]) == 1):  # If number is negative
+                    imm_display = hex((int(imm) + (1 << 32)) % (1 << 32))
+                    print("Next Innstruction: ", next_mips_ins + " " + "$" + next_rt + " ," + "$" + next_rs + " ," + str(imm_display))
+                else:
+                    print("Next Instruction: ", next_mips_ins + " " + "$" + next_rt + " ," + "$" + next_rs + " ," + str(next_imm))
+
+        elif (next_mips_ins == "bne"):
+                if (int(next_ins[16]) == 1):  # If number is negative
+                    imm_display = hex((int(imm) + (1 << 32)) % (1 << 32))
+                    print("Next Instruction: ", next_mips_ins + " " + "$" + next_rt + " ," + "$" + next_rs + " ," + str(imm_display))
+                print("Next Instruction: ", next_mips_ins + " " + "$" + next_rt + " ," + "$" + next_rs + " ," + str(next_imm))
+
+        elif (next_mips_ins == "lw"):
+                print("Next Instruction: ",next_mips_ins + " " + "$" + next_rt + " ," + str(hex(int(next_imm))) + "(" + "$" + next_rs + ")")
+
+        elif (next_mips_ins == "sw"):
+                print("Next Instruction: ",next_mips_ins + " " + "$" + next_rt + " ," + str(hex(int(next_imm))) + "(" + "$" + next_rs + ")")
+
+
+
+            #HAZARD DETECTION
+
+                #  DATA HAZARD DETECTION:
+        if (mips_ins == "lw"):
+            if ((next_ins_type == "R" and ((rt == next_rs) or (rt == next_rt)))):  # Next instruction is R-type
+                print("DATA HAZARD DETECTED\n\n")
+                total_cycle_count += 1
+                stall_count+=1
+                data_hazard+=1
+
+            elif (next_mips_ins == "beq" or next_mips_ins == "bne"):  # Next instruction is I-type
+                if ((rt == next_rs) or (rt == next_rt)):
+                    print("DATA HAZARD DETECTED\n\n")
+                    total_cycle_count += 1
+                    stall_count+=1
+                    data_hazard+=1
+            else:
+                print("NO HAZARD DETECTED\n\n")
+
+
+            if (next_mips_ins == "sw" or next_mips_ins == "addi"):  # Next instruction is I-type
+                if (rt == next_rs):
+                    print("DATA HAZARD DETECTED\n\n")
+                    total_cycle_count += 1
+                    stall_count+=1
+                    data_hazard+=1
+                else:
+                    print("NO HAZARD DETECTED\n\n")
+
+
+        elif (current_ins_type=="R" and ((next_mips_ins == "sw") or (next_mips_ins == "addi"))):
+            if (rd == next_rs):
+                print("DATA HAZARD DETECTED")
+                print("ISSUE SOLVED BY FORWARDING")
+                print("NO STALLING OR FLUSHING IMPLEMENTED\n\n")
+            else:
+                print("NO HAZARD DETECTED\n\n")
+
+        elif (current_ins_type == "R" and next_ins_type == "R"):
+            if (rd == next_rs or rd == next_rt):
+                print("DATA HAZARD DETECTED")
+                print("ISSUE SOLVED BY FORWARDING")
+                print("NO STALLING OR FLUSHING IMPLEMENTED\n\n")
+            else:
+                print("NO HAZARD DETECTED\n\n")
+
+            # CONTROL HAZARD DETECTION:
+        elif ((mips_ins == "beq") or (mips_ins == "bne") and (rs == rt)):
+            print("CONTROL HAZARD DETECTED\n\n")
+            total_cycle_count += 1
+            flush_count+=1
+            control_hazard+=1
+
+        elif(mips_ins=="addi"):
+            if(next_ins_type=="R" or next_ins=="beq" or next_ins=="bne"):
+                if((rt==next_rs) or (rt==next_rt)):
+                    print("DATA HAZARD DETECTED")
+                    print("ISSUE SOLVED BY FORWARDING")
+                    print("NO STALLING OR FLUSHING IMPLEMENTED\n\n")
+
+            if(next_mips_ins=="lw" or next_mips_ins=="sw"):
+                if(rt==next_rs):
+                    print("DATA HAZARD DETECTED")
+                    print("ISSUE SOLVED BY FORWARDING")
+                    print("NO STALLING OR FLUSHING IMPLEMENTED\n\n")
+            else:
+                print("NO HAZARD DETECTED\n\n")
+        else:
+            print("NO HAZARD DETECTED\n\n")
+
+
+print("Last line:",next_line)
+print("END LINE REACHED")
+print("\n\nEXECUTION COMPLETED:")
+print("Total number of instructions executed:",length)
+print("Final Register values:")
+for i in range(8):
+    print("$%d=%d"%(i,register_val[i]))
+print("Dynamic Instruction Count:")
+print("R-type:",R_type_count)
+print("I-type:",I_type_count+1)#Adding 1  for the beq of the last line because it is read but not computed
+print("Total:",R_type_count+I_type_count+1)#Adding 1  for the beq of the last line because it is read but not computed
+print("Total cycles completed:",total_cycle_count)
+
+print("Number of instructions executed in 3 cycles:",three_cycle_instr_count+1)#Adding 1  for the beq of the last line because it is read but not computed
+print("Number of instructions executed in 4 cycles:",four_cycle_instr_count)
+print("Number of instructions executed in 5 cycles:",five_cycle_instr_count)
+print("Number of stalls:",stall_count)
+print("Number of flushes:",flush_count)
+infile.close()
