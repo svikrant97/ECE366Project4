@@ -4,6 +4,7 @@ Current line: 0x20010003
 Current I_mem(Binary format): 00100000000000010000000000000011
 Instruction Type: I-type
 Current PC: 0x0
+Line number: 0
 Current Instruction:  addi $1 ,$0 ,3
 R1= 3
 Next Instruction:  addi $2 ,$0 ,80
@@ -15,6 +16,7 @@ Current line: 0x20020050
 Current I_mem(Binary format): 00100000000000100000000001010000
 Instruction Type: I-type
 Current PC: 0x4
+Line number: 1
 Current Instruction:  addi $2 ,$0 ,80
 R2= 80
 Next Instruction:  sw $1 ,0x2000($2)
@@ -28,6 +30,7 @@ Current line: 0xac412000
 Current I_mem(Binary format): 10101100010000010010000000000000
 Instruction Type: I-type
 Current PC: 0x8
+Line number: 2
 Current Innstruction:  sw $1 ,0x2000($2)
 Array address: 20
 Next Instruction:  addi $2 ,$2 ,-4
@@ -39,8 +42,9 @@ Current line: 0x2042fffc
 Current I_mem(Binary format): 00100000010000101111111111111100
 Instruction Type: I-type
 Current PC: 0xc
+Line number: 3
 Current Instruction:  addi $2 ,$2 ,-4
-R2= 72
+R2= 76
 Next Instruction:  beq $0 ,$2 ,4
 NO HAZARD DETECTED
 
@@ -50,6 +54,7 @@ Current line: 0x10400004
 Current I_mem(Binary format): 00010000010000000000000000000100
 Instruction Type: I-type
 Current PC: 0x10
+Line number: 4
 Current Instruction:  beq $0 ,$2 ,4
 Next Instruction:  add $1 ,$1 ,$1
 CONTROL HAZARD DETECTED
@@ -60,22 +65,25 @@ Current line: 0x00210820
 Current I_mem(Binary format): 00000000001000010000100000100000
 Instruction Type: R-type
 Current PC: 0x14
+Line number: 5
 Current Instruction:  add $1 ,$1 ,$1
-R1= 12
+R1= 6
 Total Cycles completed till now: 22
 Current line: 0x00010822
 Current I_mem(Binary format): 00000000000000010000100000100010
 Instruction Type: R-type
 Current PC: 0x18
+Line number: 6
 Current Instruction:  sub $1 ,$0 ,$1
-R1= 6
+R1= -6
 Total Cycles completed till now: 26
 Current line: 0x20210003
 Current I_mem(Binary format): 00100000001000010000000000000011
 Instruction Type: I-type
 Current PC: 0x1c
+Line number: 7
 Current Instruction:  addi $1 ,$1 ,3
-R1= 0
+R1= -3
 Next Innstruction:  beq $3 ,$3 ,0x3
 NO HAZARD DETECTED
 
@@ -85,8 +93,9 @@ Current line: 0x1063fff9
 Current I_mem(Binary format): 00010000011000111111111111111001
 Instruction Type: I-type
 Current PC: 0x20
+Line number: 8
 Current Innstruction:  beq $3 ,$3 ,0xfffffff9
-rs=rt
+Branching to line: 0
 Next Instruction:  addi $5 ,$0 ,40
 CONTROL HAZARD DETECTED
 
@@ -96,6 +105,7 @@ Current line: 0x20050028
 Current I_mem(Binary format): 00100000000001010000000000101000
 Instruction Type: I-type
 Current PC: 0x4
+Line number: 1
 Current Instruction:  addi $5 ,$0 ,40
 R5= 40
 Next Instruction:  lw $1 ,0x2000($2)
@@ -104,6 +114,7 @@ Current line: 0x8c412000
 Current I_mem(Binary format): 10001100010000010010000000000000
 Instruction Type: I-type
 Current PC: 0x8
+Line number: 2
 Current Instruction:  lw $1 ,0x2000($2)
 Next Instruction:  slt $3 ,$1 ,$0
 DATA HAZARD DETECTED
@@ -114,6 +125,7 @@ Current line: 0x0020182a
 Current I_mem(Binary format): 00000000001000000001100000101010
 Instruction Type: R-type
 Current PC: 0xc
+Line number: 3
 Current Instruction:  slt $3 ,$1 ,$0
 R3= 0
 Total Cycles completed till now: 48
@@ -121,6 +133,7 @@ Current line: 0x14600001
 Current I_mem(Binary format): 00010100011000000000000000000001
 Instruction Type: I-type
 Current PC: 0x10
+Line number: 4
 Current Instruction:  bne $0 ,$3 ,1
 Next Instruction:  add $4 ,$4 ,$1
 NO HAZARD DETECTED
@@ -131,6 +144,7 @@ Current line: 0x00812020
 Current I_mem(Binary format): 00000000100000010010000000100000
 Instruction Type: R-type
 Current PC: 0x14
+Line number: 5
 Current Instruction:  add $4 ,$4 ,$1
 R4= 0
 Total Cycles completed till now: 52
@@ -138,8 +152,9 @@ Current line: 0x20420004
 Current I_mem(Binary format): 00100000010000100000000000000100
 Instruction Type: I-type
 Current PC: 0x18
+Line number: 6
 Current Instruction:  addi $2 ,$2 ,4
-R2= 84
+R2= 80
 Next Instruction:  bne $5 ,$2 ,0x4
 Next Instruction:  bne $5 ,$2 ,-6
 NO HAZARD DETECTED
@@ -150,8 +165,10 @@ Current line: 0x1445fffa
 Current I_mem(Binary format): 00010100010001011111111111111010
 Instruction Type: I-type
 Current PC: 0x1c
+Line number: 7
 Current Innstruction:  bne $5 ,$2 ,0xfffffffa
 rs!=rt
+Branching to line 0
 Next Instruction:  sw $4 ,0x2000($0)
 NO HAZARD DETECTED
 
@@ -161,6 +178,7 @@ Current line: 0xac042000
 Current I_mem(Binary format): 10101100000001000010000000000000
 Instruction Type: I-type
 Current PC: 0x4
+Line number: 1
 Current Innstruction:  sw $4 ,0x2000($0)
 Array address: 0
 Next Innstruction:  beq $0 ,$0 ,0x2000
