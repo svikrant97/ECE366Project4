@@ -4,6 +4,7 @@ Current line: 0x20010005
 Current I_mem(Binary format): 00100000000000010000000000000101
 Instruction Type: I-type
 Current PC: 0x0
+Line number: 0
 Current Instruction:  addi $1 ,$0 ,5
 R1= 5
 Next Instruction:  addi $2 ,$0 ,60
@@ -15,6 +16,7 @@ Current line: 0x2002003c
 Current I_mem(Binary format): 00100000000000100000000000111100
 Instruction Type: I-type
 Current PC: 0x4
+Line number: 1
 Current Instruction:  addi $2 ,$0 ,60
 R2= 60
 Next Instruction:  sw $1 ,0x2000($2)
@@ -28,6 +30,7 @@ Current line: 0xac412000
 Current I_mem(Binary format): 10101100010000010010000000000000
 Instruction Type: I-type
 Current PC: 0x8
+Line number: 2
 Current Innstruction:  sw $1 ,0x2000($2)
 Array address: 15
 Next Instruction:  addi $2 ,$2 ,-4
@@ -39,8 +42,9 @@ Current line: 0x2042fffc
 Current I_mem(Binary format): 00100000010000101111111111111100
 Instruction Type: I-type
 Current PC: 0xc
+Line number: 3
 Current Instruction:  addi $2 ,$2 ,-4
-R2= 52
+R2= 56
 Next Instruction:  beq $0 ,$2 ,4
 NO HAZARD DETECTED
 
@@ -50,6 +54,7 @@ Current line: 0x10400004
 Current I_mem(Binary format): 00010000010000000000000000000100
 Instruction Type: I-type
 Current PC: 0x10
+Line number: 4
 Current Instruction:  beq $0 ,$2 ,4
 Next Instruction:  add $1 ,$1 ,$1
 CONTROL HAZARD DETECTED
@@ -60,22 +65,25 @@ Current line: 0x00210820
 Current I_mem(Binary format): 00000000001000010000100000100000
 Instruction Type: R-type
 Current PC: 0x14
+Line number: 5
 Current Instruction:  add $1 ,$1 ,$1
-R1= 20
+R1= 10
 Total Cycles completed till now: 22
 Current line: 0x00010822
 Current I_mem(Binary format): 00000000000000010000100000100010
 Instruction Type: R-type
 Current PC: 0x18
+Line number: 6
 Current Instruction:  sub $1 ,$0 ,$1
-R1= 10
+R1= -10
 Total Cycles completed till now: 26
 Current line: 0x20210003
 Current I_mem(Binary format): 00100000001000010000000000000011
 Instruction Type: I-type
 Current PC: 0x1c
+Line number: 7
 Current Instruction:  addi $1 ,$1 ,3
-R1= -4
+R1= -7
 Next Innstruction:  beq $3 ,$3 ,0x3
 NO HAZARD DETECTED
 
@@ -85,8 +93,9 @@ Current line: 0x1063fff9
 Current I_mem(Binary format): 00010000011000111111111111111001
 Instruction Type: I-type
 Current PC: 0x20
+Line number: 8
 Current Innstruction:  beq $3 ,$3 ,0xfffffff9
-rs=rt
+Branching to line: 0
 Next Instruction:  addi $6 ,$0 ,60
 CONTROL HAZARD DETECTED
 
@@ -96,6 +105,7 @@ Current line: 0x2006003c
 Current I_mem(Binary format): 00100000000001100000000000111100
 Instruction Type: I-type
 Current PC: 0x4
+Line number: 1
 Current Instruction:  addi $6 ,$0 ,60
 R6= 60
 Next Instruction:  add $4 ,$0 ,$0
@@ -107,6 +117,7 @@ Current line: 0x00002020
 Current I_mem(Binary format): 00000000000000000010000000100000
 Instruction Type: R-type
 Current PC: 0x8
+Line number: 2
 Current Instruction:  add $4 ,$0 ,$0
 R4= 0
 Total Cycles completed till now: 42
@@ -114,6 +125,7 @@ Current line: 0x8c412004
 Current I_mem(Binary format): 10001100010000010010000000000100
 Instruction Type: I-type
 Current PC: 0xc
+Line number: 3
 Current Instruction:  lw $1 ,0x2004($2)
 Next Instruction:  xor $4 ,$4 ,$1
 DATA HAZARD DETECTED
@@ -124,6 +136,7 @@ Current line: 0x00812026
 Current I_mem(Binary format): 00000000100000010010000000100110
 Instruction Type: R-type
 Current PC: 0x10
+Line number: 4
 Current Instruction:  xor $4 ,$4 ,$1
 R4= 0
 Total Cycles completed till now: 52
@@ -131,6 +144,7 @@ Current line: 0x8c412008
 Current I_mem(Binary format): 10001100010000010010000000001000
 Instruction Type: I-type
 Current PC: 0x14
+Line number: 5
 Current Instruction:  lw $1 ,0x2008($2)
 Next Instruction:  xor $4 ,$4 ,$1
 DATA HAZARD DETECTED
@@ -141,6 +155,7 @@ Current line: 0x00812026
 Current I_mem(Binary format): 00000000100000010010000000100110
 Instruction Type: R-type
 Current PC: 0x18
+Line number: 6
 Current Instruction:  xor $4 ,$4 ,$1
 R4= 0
 Total Cycles completed till now: 62
@@ -148,6 +163,7 @@ Current line: 0x8c41200c
 Current I_mem(Binary format): 10001100010000010010000000001100
 Instruction Type: I-type
 Current PC: 0x1c
+Line number: 7
 Current Instruction:  lw $1 ,0x200c($2)
 Next Instruction:  xor $4 ,$4 ,$1
 DATA HAZARD DETECTED
@@ -158,6 +174,7 @@ Current line: 0x00812026
 Current I_mem(Binary format): 00000000100000010010000000100110
 Instruction Type: R-type
 Current PC: 0x20
+Line number: 8
 Current Instruction:  xor $4 ,$4 ,$1
 R4= 0
 Total Cycles completed till now: 72
@@ -165,6 +182,7 @@ Current line: 0xac442004
 Current I_mem(Binary format): 10101100010001000010000000000100
 Instruction Type: I-type
 Current PC: 0x24
+Line number: 9
 Current Innstruction:  sw $4 ,0x2004($2)
 Array address: 15
 Next Instruction:  xor $5 ,$5 ,$4
@@ -176,6 +194,7 @@ Current line: 0x00a42826
 Current I_mem(Binary format): 00000000101001000010100000100110
 Instruction Type: R-type
 Current PC: 0x28
+Line number: 10
 Current Instruction:  xor $5 ,$5 ,$4
 R5= 0
 Total Cycles completed till now: 81
@@ -183,8 +202,9 @@ Current line: 0x20420004
 Current I_mem(Binary format): 00100000010000100000000000000100
 Instruction Type: I-type
 Current PC: 0x2c
+Line number: 11
 Current Instruction:  addi $2 ,$2 ,4
-R2= 64
+R2= 60
 Next Instruction:  bne $6 ,$2 ,0x4
 Next Instruction:  bne $6 ,$2 ,-11
 NO HAZARD DETECTED
@@ -195,6 +215,7 @@ Current line: 0x1446fff5
 Current I_mem(Binary format): 00010100010001101111111111110101
 Instruction Type: I-type
 Current PC: 0x30
+Line number: 12
 Current Innstruction:  bne $6 ,$2 ,0xfffffff5
 Next Instruction:  sw $5 ,0x2000($0)
 NO HAZARD DETECTED
@@ -205,6 +226,7 @@ Current line: 0xac052000
 Current I_mem(Binary format): 10101100000001010010000000000000
 Instruction Type: I-type
 Current PC: 0x34
+Line number: 13
 Current Innstruction:  sw $5 ,0x2000($0)
 Array address: 0
 Next Innstruction:  beq $0 ,$0 ,0x2000
